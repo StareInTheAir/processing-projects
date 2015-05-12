@@ -2,30 +2,29 @@ void setup() {
   frameRate(25);
 //  size(displayWidth, displayHeight);
   size(800, 600);
-//  drawWhiteNoise();
-  drawCross();
+  drawWhiteNoise();
+//  drawCross();
+  image(sourceImage, 0, 0);
 }
 
 PImage sourceImage;
 void drawCross() {
   sourceImage = loadImage("kreuz.jpg");
   sourceImage.loadPixels();
-  image(sourceImage, 0, 0);
 }
 
 void drawWhiteNoise() {
-  loadPixels();
-  for (int x = 0; x < width; x += 1) {
-    for (int y = 0; y < height; y += 1) {
+  sourceImage = createImage(400, 400, RGB);
+  for (int x = 0; x < sourceImage.width; x += 1) {
+    for (int y = 0; y < sourceImage.height; y += 1) {
       // rgb random
 //      color c = color(random(0, 255), random(0, 255), random(0, 255));
       // grey random
       color c = color(random(0, 255));
       // Set each pixel onscreen to a grayscale value
-      pixels[x + y * width] = c;
+      sourceImage.pixels[x + y * sourceImage.width] = c;
     }
   }
-  updatePixels();
 }
 
 int redOffset = 0;
@@ -56,6 +55,9 @@ void calculateNewOffset() {
   redOffset = round(quinticIn(animationTimeRed, 0, 5, animationDuration));
   greenOffset = round(quinticIn(animationTimeGreen, 0, -5, animationDuration));
   blueOffset = round(quinticIn(animationTimeBlue, 0, 10, animationDuration));
+//  redOffset = 0;
+//  greenOffset = 0;
+//  blueOffset = 0;
 }
 
 void advanceAnimations() {
