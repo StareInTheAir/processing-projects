@@ -1,5 +1,5 @@
 void setup() {
-  frameRate(60);
+  frameRate(25);
 //  size(displayWidth, displayHeight);
   size(800, 600);
 //  drawWhiteNoise();
@@ -32,10 +32,10 @@ int redOffset = 0;
 int greenOffset = 0;
 int blueOffset = 0;
 
-float quarticInAndOut(float t, float b, float c, float d) {
+float quinticIn(float t, float b, float c, float d) {
   float ts=(t/=d)*t;
   float tc=ts*t;
-  return b+c*(6*tc + -9*ts + 4*t);
+  return b+c*(tc*ts);
 }
 
 int animationTimeRed = 0;
@@ -53,9 +53,9 @@ boolean animationIncreaseGreen = true;
 boolean animationIncreaseBlue = true;
 
 void calculateNewOffset() {
-  redOffset = round(quarticInAndOut(animationTimeRed, 0, 10, animationDuration));
-  greenOffset = round(quarticInAndOut(animationTimeGreen, 0, -10, animationDuration));
-  blueOffset = round(quarticInAndOut(animationTimeBlue, 0, 10, animationDuration));
+  redOffset = round(quinticIn(animationTimeRed, 0, 5, animationDuration));
+  greenOffset = round(quinticIn(animationTimeGreen, 0, -5, animationDuration));
+  blueOffset = round(quinticIn(animationTimeBlue, 0, 10, animationDuration));
 }
 
 void advanceAnimations() {
