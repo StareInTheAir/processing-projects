@@ -1,19 +1,22 @@
-class LoopingPausingAnimator {
+abstract class LoopingPausingAnimator {
   int time;
-  int remainingPauseDuration;
+  int remainingPauseDuration;  
   boolean increase;
   final int animationDuration;
   final int minPauseDuration;
   final int maxPauseDuration; 
 
-  LoopingPausingAnimator(int pauseDuration, int animationDuration, int minPauseDuration, int maxPauseDuration) {
-    this.pauseDuration = pauseDuration;
+  LoopingPausingAnimator(int animationDuration, int minPauseDuration, int maxPauseDuration) {
     this.animationDuration = animationDuration;
     this.minPauseDuration = minPauseDuration;
     this.maxPauseDuration = maxPauseDuration;
+    
+    this.time = 0;
+    this.remainingPauseDuration = 0;
+    this.increase = true;
   }
 
-  void advanceAnimations() {
+  void advanceAnimation() {
     if (remainingPauseDuration <= 0) {
       if (!increase && time <= 0) {
         remainingPauseDuration = round(random(minPauseDuration, maxPauseDuration));
@@ -30,5 +33,7 @@ class LoopingPausingAnimator {
       remainingPauseDuration -= 1;
     }
   }
+  
+  abstract float getAnimationValue(float beginningValue, float endValue);
 }
 

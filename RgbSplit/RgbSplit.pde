@@ -1,13 +1,43 @@
+PImage sourceImage;
+
+final int animationDuration = 10;
+final int maxPauseDuration = 50;
+final int minPauseDuration = 0;
+
+LoopingPausingAnimator redXAnimator;
+LoopingPausingAnimator redYAnimator;
+LoopingPausingAnimator blueXAnimator;
+LoopingPausingAnimator blueYAnimator;
+LoopingPausingAnimator greenXAnimator;
+LoopingPausingAnimator greenYAnimator;
+
+int redXOffset = 0;
+int redYOffset = 0;
+int greenXOffset = 0;
+int greenYOffset = 0;
+int blueXOffset = 0;
+int blueYOffset = 0;
+
 void setup() {
-  frameRate(25);
+  frameRate(10);
 //  size(displayWidth, displayHeight);
   size(800, 600);
-  drawWhiteNoise();
-//  drawCross();
+//  drawWhiteNoise();
+  drawCross();
   image(sourceImage, 0, 0);
+  
+  setupAnimators();
 }
 
-PImage sourceImage;
+void setupAnimators() {
+  redXAnimator = new QuinticAnimator(animationDuration, minPauseDuration, maxPauseDuration);
+  redYAnimator = new QuinticAnimator(animationDuration, minPauseDuration, maxPauseDuration);
+  blueXAnimator = new QuinticAnimator(animationDuration, minPauseDuration, maxPauseDuration);
+  blueYAnimator = new QuinticAnimator(animationDuration, minPauseDuration, maxPauseDuration);
+  greenXAnimator = new QuinticAnimator(animationDuration, minPauseDuration, maxPauseDuration);
+  greenYAnimator = new QuinticAnimator(animationDuration, minPauseDuration, maxPauseDuration);
+}
+
 void drawCross() {
   sourceImage = loadImage("kreuz.jpg");
   sourceImage.loadPixels();
@@ -27,87 +57,22 @@ void drawWhiteNoise() {
   }
 }
 
-int redOffset = 0;
-int greenOffset = 0;
-int blueOffset = 0;
-
-float quinticIn(float t, float b, float c, float d) {
-  float ts=(t/=d)*t;
-  float tc=ts*t;
-  return b+c*(tc*ts);
-}
-
-int animationTimeRed = 0;
-int animationTimeGreen = 0;
-int animationTimeBlue = 0;
-
-int animationBreakRed = 0;
-int animationBreakGreen = 0;
-int animationBreakBlue = 0;
-
-final int animationDuration = 10;
-
-boolean animationIncreaseRed = true;
-boolean animationIncreaseGreen = true;
-boolean animationIncreaseBlue = true;
-
 void calculateNewOffset() {
-  redOffset = round(quinticIn(animationTimeRed, 0, 5, animationDuration));
-  greenOffset = round(quinticIn(animationTimeGreen, 0, -5, animationDuration));
-  blueOffset = round(quinticIn(animationTimeBlue, 0, 10, animationDuration));
-//  redOffset = 0;
-//  greenOffset = 0;
-//  blueOffset = 0;
+  redXOffset = round(redXAnimator.getAnimationValue(0, 5));
+  redYOffset = round(redYAnimator.getAnimationValue(0, 5));
+  greenXOffset = round(greenXAnimator.getAnimationValue(0, 5));
+  greenYOffset = round(greenYAnimator.getAnimationValue(0, 5));
+  blueXOffset = round(blueXAnimator.getAnimationValue(0, 5));
+  blueYOffset = round(blueYAnimator.getAnimationValue(0, 5));
 }
 
 void advanceAnimations() {
-  if (animationBreakRed <= 0) {
-    if (!animationIncreaseRed && animationTimeRed <= 0) {
-      animationBreakRed = round(random(0, 50));
-      animationTimeRed = 0;
-      animationIncreaseRed = true;
-    } else if (animationIncreaseRed && animationTimeRed >= animationDuration) {
-      animationIncreaseRed = false;
-    } else if (animationIncreaseRed) {
-      animationTimeRed += 1;
-    } else {
-      animationTimeRed -= 1;
-    }
-  } else {
-    animationBreakRed -= 1;
-  }
-  
-  if (animationBreakGreen <= 0) {
-    if (!animationIncreaseGreen && animationTimeGreen <= 0) {
-      animationBreakGreen = round(random(0, 50));
-      animationTimeGreen = 0;
-      animationIncreaseGreen = true;
-    } else if (animationIncreaseGreen && animationTimeGreen >= animationDuration) {
-      animationIncreaseGreen = false;
-    } else if (animationIncreaseGreen) {
-      animationTimeGreen += 1;
-    } else {
-      animationTimeGreen -= 1;
-    }
-  } else {
-    animationBreakGreen -= 1;
-  }
-  
-  if (animationBreakBlue <= 0) {
-    if (!animationIncreaseBlue && animationTimeBlue <= 0) {
-      animationBreakBlue = round(random(0, 50));
-      animationTimeBlue = 0;
-      animationIncreaseBlue = true;
-    } else if (animationIncreaseBlue && animationTimeBlue >= animationDuration) {
-      animationIncreaseBlue = false;
-    } else if (animationIncreaseBlue) {
-      animationTimeBlue += 1;
-    } else {
-      animationTimeBlue -= 1;
-    }
-  } else {
-    animationBreakBlue -= 1;
-  }
+  redXAnimator.advanceAnimation();
+  redYAnimator.advanceAnimation();
+  blueXAnimator.advanceAnimation();
+  blueYAnimator.advanceAnimation();
+  greenXAnimator.advanceAnimation();
+  greenYAnimator.advanceAnimation();
 }
 
 void shift() {
@@ -117,7 +82,7 @@ void shift() {
       color oldColor = sourceImage.pixels[x + y * sourceImage.width];
       
       float newRed;
-      int newRedXPosition = x + redOffset;
+      int newRedXPosition = x + redXOffset;
       if (newRedXPosition < 0 || newRedXPosition >= sourceImage.width) {
         // neighbor position would be out of bound
         newRed = oldColor >> 16 & 0xFF;
@@ -127,7 +92,7 @@ void shift() {
       }
       
       float newGreen;
-      int newGreenXPosition = x + greenOffset;
+      int newGreenXPosition = x + greenYOffset;
       if (newGreenXPosition < 0 || newGreenXPosition >= sourceImage.width) {
         // neighbor position would be out of bound
         newGreen = oldColor >> 8 & 0xFF;
@@ -137,7 +102,7 @@ void shift() {
       }
       
       float newBlue;
-      int newBlueYPosition = y + blueOffset;
+      int newBlueYPosition = y + blueYOffset;
       if (newBlueYPosition < 0 || newBlueYPosition >= sourceImage.height) {
         // neighbor position would be out of bound
         newBlue = oldColor & 0xFF;
@@ -154,7 +119,7 @@ void shift() {
 
 void draw() {
   shift();
-  calculateNewOffset();
   advanceAnimations();
+  calculateNewOffset();
 }
 
