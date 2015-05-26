@@ -1,6 +1,6 @@
 PImage sourceImage;
 
-final int animationDuration = 10;
+final int animationDuration = 5;
 final int maxPauseDuration = 50;
 final int minPauseDuration = 0;
 
@@ -19,7 +19,7 @@ int blueXOffset = 0;
 int blueYOffset = 0;
 
 void setup() {
-  frameRate(10);
+  frameRate(25);
 //  size(displayWidth, displayHeight);
   size(800, 600);
 //  drawWhiteNoise();
@@ -83,32 +83,41 @@ void shift() {
       
       float newRed;
       int newRedXPosition = x + redXOffset;
-      if (newRedXPosition < 0 || newRedXPosition >= sourceImage.width) {
+      int newRedYPosition = y + redYOffset;
+      if (newRedXPosition < 0 || newRedXPosition >= sourceImage.width
+            || newRedYPosition < 0 || newRedYPosition >= sourceImage.height) {
         // neighbor position would be out of bound
+        // take old original red value
         newRed = oldColor >> 16 & 0xFF;
       } else {
         // take the red from a neighbor
-        newRed = sourceImage.pixels[y * sourceImage.width + newRedXPosition] >> 16 & 0xFF;
+        newRed = sourceImage.pixels[newRedYPosition * sourceImage.width + newRedXPosition] >> 16 & 0xFF;
       }
       
       float newGreen;
-      int newGreenXPosition = x + greenYOffset;
-      if (newGreenXPosition < 0 || newGreenXPosition >= sourceImage.width) {
+      int newGreenXPosition = x + greenXOffset;
+      int newGreenYPosition = y + greenYOffset;
+      if (newGreenXPosition < 0 || newGreenXPosition >= sourceImage.width
+            || newGreenYPosition < 0 || newGreenYPosition >= sourceImage.height) {
         // neighbor position would be out of bound
+        // take old original green value
         newGreen = oldColor >> 8 & 0xFF;
       } else {
-        // take the red from a neighbor
-        newGreen = sourceImage.pixels[y * sourceImage.width + newGreenXPosition] >> 8 & 0xFF;
+        // take the green from a neighbor
+        newGreen = sourceImage.pixels[newGreenYPosition * sourceImage.width + newGreenXPosition] >> 8 & 0xFF;
       }
       
       float newBlue;
+      int newBlueXPosition = x + blueXOffset;
       int newBlueYPosition = y + blueYOffset;
-      if (newBlueYPosition < 0 || newBlueYPosition >= sourceImage.height) {
+      if (newBlueXPosition < 0 || newBlueXPosition >= sourceImage.width
+            || newBlueYPosition < 0 || newBlueYPosition >= sourceImage.height) {
         // neighbor position would be out of bound
+        // take old original blue value
         newBlue = oldColor & 0xFF;
       } else {
-        // take the red from a neighbor
-        newBlue = sourceImage.pixels[newBlueYPosition * sourceImage.width + x] & 0xFF;
+        // take the blue from a neighbor
+        newBlue = sourceImage.pixels[newBlueYPosition * sourceImage.width + newBlueXPosition] & 0xFF;
       }
       
       shiftedImage.pixels[x + y * sourceImage.width] = color(newRed, newGreen, newBlue);
