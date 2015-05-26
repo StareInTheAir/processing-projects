@@ -4,7 +4,7 @@ class QuinticAnimator extends LoopingPausingAnimator {
   }
   
   float getAnimationValue(float beginningValue, float endValue) {
-    float t = super.time / super.animationDuration;
+    float t = super.time / (float) super.animationDuration;
     float ts = t * t;
     float tc = ts * t;
     return beginningValue + endValue * (tc * ts);
